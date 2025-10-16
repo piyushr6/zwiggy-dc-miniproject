@@ -1,9 +1,3 @@
-It looks like you want to format the provided text so it is properly rendered as a clean, standard **`README.md`** file when pushed to GitHub or viewed in a markdown renderer.
-
-The main change needed is correcting the markdown fenced code blocks (the ones starting with `` markdown` and ending with  ``) and ensuring proper indentation for the folder structure.
-
-Here is the revised, ready-to-paste content for your `README.md` file:
-
 ```markdown
 # Zwiggy DC Mini Project
 
