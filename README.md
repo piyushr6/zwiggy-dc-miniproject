@@ -2,13 +2,14 @@
 # Zwiggy DC Mini Project
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Folder Structure](#folder-structure)
 - [Technologies Used](#technologies-used)
 - [Setup Instructions](#setup-instructions)
-    - [Backend](#backend)
-    - [Frontend](#frontend)
-    - [Analytics](#analytics)
+  - [Backend](#backend)
+  - [Frontend](#frontend)
+  - [Analytics](#analytics)
 - [Running the Project](#running-the-project)
 - [Contributing](#contributing)
 - [License](#license)
@@ -22,14 +23,13 @@ A fully functional Food Delivery Platform built to demonstrate real **Distribute
 ---
 
 ## Folder Structure
-
 ```
 
 root/
 │
-├── backend/        \# Node.js backend
-├── frontend/       \# React frontend
-├── analytics/      \# Python/JS analytics scripts
+├── backend/ \# Node.js backend
+├── frontend/ \# React frontend
+├── analytics/ \# Python/JS analytics scripts
 └── README.md
 
 ````
@@ -123,7 +123,7 @@ pip install -r requirements.txt
 python analysis.py
 ```
 
------
+---
 
 ## Running the Project
 
@@ -154,11 +154,12 @@ cd analytics
 python analysis.py
 ```
 
------
+---
 
 ## License
 
 This project is licensed under the **MIT License**.
 
 ```
+
 ```
