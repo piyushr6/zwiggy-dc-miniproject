@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
 
+from zwiggy.backend.config import Config
 from zwiggy.backend.distributed import load_balancer
 from zwiggy.backend.services.order_service import OrderService
 
@@ -16,7 +17,7 @@ class CreateOrderRequest(BaseModel):
 async def create_order(request: CreateOrderRequest):
     """Create new order"""
     # Select node using load balancer
-    node = load_balancer.select_node(all_nodes)
+    node = load_balancer.select_node(Config.ALL_NODES)
     
     if not node:
         raise HTTPException(status_code=503, detail="No nodes available")
@@ -50,7 +51,7 @@ async def get_orders():
     """Get all orders from all nodes"""
     all_orders = []
     
-    for node in all_nodes:
+    for node in Config.ALL_NODES:
         if node.is_active:
             order_service = OrderService(node)
             orders = order_service.get_orders()

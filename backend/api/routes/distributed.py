@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from zwiggy.backend import config
 from zwiggy.backend.distributed import load_balancer
 from zwiggy.backend.distributed.leader_election import BullyLeaderElection
 from zwiggy.backend.simulation import failure_injector
@@ -11,14 +12,14 @@ async def get_nodes_status():
     """Get status of all nodes"""
     return {
         "success": True,
-        "nodes": [node.get_status() for node in all_nodes]
+        "nodes": [node.get_status() for node in config.ALL_NODES]
     }
 
 @router.get("/leader")
 async def get_leader():
     """Get current leader"""
     leader = None
-    for node in all_nodes:
+    for node in config.ALL_NODES:
         if node.is_leader:
             leader = node
             break
@@ -33,11 +34,11 @@ async def trigger_election():
     """Trigger leader election"""
     # Start election from random node
     import random
-    active_nodes = [n for n in all_nodes if n.is_active]
+    active_nodes = [n for n in config.ALL_NODES if n.is_active]
     
     if active_nodes:
         node = random.choice(active_nodes)
-        election = BullyLeaderElection(node, Config.ALL_NODES)
+        election = BullyLeaderElection(node, config.Config.CONFIG.ALL_NODES)
         election.start_election()
         
         return {
@@ -52,7 +53,7 @@ async def get_events():
     """Get all distributed events"""
     all_events = []
     
-    for node in all_nodes:
+    for node in config.ALL_NODES:
         all_events.extend(node.event_log)
     
     # Sort by logical time
@@ -67,7 +68,7 @@ async def get_events():
 @router.get("/load-balance-stats")
 async def get_load_balance_stats():
     """Get load balancing statistics"""
-    stats = load_balancer.get_distribution_stats(all_nodes)
+    stats = load_balancer.get_distribution_stats(config.ALL_NODES)
     
     return {
         "success": True,

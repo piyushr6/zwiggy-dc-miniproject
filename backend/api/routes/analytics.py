@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from zwiggy.backend.config import Config
 from zwiggy.backend.services.analytics_service import AnalyticsService
 from zwiggy.backend.services.order_service import OrderService
 
@@ -10,7 +11,7 @@ async def get_top_items():
     """Get top selling items using MapReduce"""
     # Collect all orders from all nodes
     all_orders = []
-    for node in all_nodes:
+    for node in Config.ALL_NODES:
         if node.is_active:
             order_service = OrderService(node)
             all_orders.extend(order_service.get_orders())
@@ -18,7 +19,7 @@ async def get_top_items():
     if not all_orders:
         return {"success": True, "data": {}}
     
-    analytics = AnalyticsService(all_nodes)
+    analytics = AnalyticsService(Config.ALL_NODES)
     results = analytics.get_top_selling_items(all_orders)
     
     # Sort by quantity
@@ -33,7 +34,7 @@ async def get_top_items():
 async def get_revenue():
     """Get revenue by restaurant using MapReduce"""
     all_orders = []
-    for node in all_nodes:
+    for node in Config.ALL_NODES:
         if node.is_active:
             order_service = OrderService(node)
             all_orders.extend(order_service.get_orders())
@@ -41,7 +42,7 @@ async def get_revenue():
     if not all_orders:
         return {"success": True, "data": {}}
     
-    analytics = AnalyticsService(all_nodes)
+    analytics = AnalyticsService(Config.ALL_NODES)
     results = analytics.get_revenue_by_restaurant(all_orders)
     
     return {
