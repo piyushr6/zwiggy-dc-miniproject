@@ -5,7 +5,7 @@ Manages delivery agent assignment and tracking.
 """
 
 from typing import List, Optional
-from backend.models import DeliveryAgent, Order
+from zwiggy.backend.models import DeliveryAgent, Order
 
 class DeliveryService:
     """Handles delivery operations"""

@@ -5,7 +5,7 @@ User Management Endpoints
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
-from backend.models import User
+from zwiggy.backend.models import User
 
 router = APIRouter(prefix="/users", tags=["users"])
 
