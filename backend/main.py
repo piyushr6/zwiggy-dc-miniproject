@@ -1,30 +1,29 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from typing import List
 
-# Import all components
-from backend.config import Config
-from backend.core.node import DistributedNode
-from backend.core.clock import LamportClock
-from backend.core.message_queue import message_queue
-from backend.distributed.leader_election import BullyLeaderElection
-from backend.distributed.consistency import ConsistencyManager
-from backend.distributed.load_balancer import LoadBalancer
-from backend.distributed.mapreduce import MapReduceEngine
-from backend.concurrency.lock_manager import lock_manager
-from backend.models.restaurant import Restaurant, MenuItem
-from backend.models.order import Order, OrderItem
-from backend.services.restaurant_service import RestaurantService
-from backend.services.order_service import OrderService
-from backend.services.analytics_service import AnalyticsService
-from backend.simulation.traffic_generator import TrafficGenerator
-from backend.simulation.failure_injector import FailureInjector
-from backend.utils.helpers import print_divider, print_node_status
+# ✅ FIXED IMPORTS — include `zwiggy.` prefix
+from zwiggy.backend.config import Config
+from zwiggy.backend.core.node import DistributedNode
+from zwiggy.backend.core.clock import LamportClock
+from zwiggy.backend.core.message_queue import message_queue
+from zwiggy.backend.distributed.leader_election import BullyLeaderElection
+from zwiggy.backend.distributed.consistency import ConsistencyManager
+from zwiggy.backend.distributed.load_balancer import LoadBalancer
+from zwiggy.backend.distributed.mapreduce import MapReduceEngine
+from zwiggy.backend.concurrency.lock_manager import lock_manager
+from zwiggy.backend.models.restaurant import Restaurant, MenuItem
+from zwiggy.backend.models.order import Order, OrderItem
+from zwiggy.backend.services.restaurant_service import RestaurantService
+from zwiggy.backend.services.order_service import OrderService
+from zwiggy.backend.services.analytics_service import AnalyticsService
+from zwiggy.backend.simulation.traffic_generator import TrafficGenerator
+from zwiggy.backend.simulation.failure_injector import FailureInjector
+from zwiggy.backend.utils.helpers import print_divider, print_node_status
 
-# Import API routes
-from backend.api.routes import restaurants, orders, distributed, analytics
+# ✅ API Routers
+from zwiggy.backend.api.routes import restaurants, orders, distributed, analytics
 
 # Initialize FastAPI app
 app = FastAPI(title="Distributed Food Delivery System")
