@@ -2,6 +2,8 @@ from typing import List, Dict, Callable, Any
 from collections import defaultdict
 import threading
 
+from zwiggy.backend.core.node import DistributedNode
+
 class MapReduceEngine:
     """MapReduce for distributed analytics"""
     

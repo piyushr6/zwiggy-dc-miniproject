@@ -2,6 +2,8 @@ import threading
 import random
 import time
 
+from zwiggy.backend.services.order_service import OrderService
+
 class TrafficGenerator:
     """Simulates concurrent order requests"""
     

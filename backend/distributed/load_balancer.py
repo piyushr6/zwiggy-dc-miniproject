@@ -4,6 +4,8 @@
 from typing import List, Dict
 import threading
 
+from zwiggy.backend.core.node import DistributedNode
+
 class LoadBalancer:
     """Load balancing algorithms for request distribution"""
     

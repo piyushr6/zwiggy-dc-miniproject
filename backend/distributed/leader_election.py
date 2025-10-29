@@ -5,6 +5,10 @@ import threading
 import time
 from typing import Dict, List, Optional
 
+from zwiggy.backend.core import message_queue
+from zwiggy.backend.core.node import DistributedNode
+from zwiggy.backend.demo import NodeRegistry
+
 class BullyLeaderElection:
     """Bully Algorithm for Leader Election"""
     

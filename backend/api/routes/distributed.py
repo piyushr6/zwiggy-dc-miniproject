@@ -1,5 +1,9 @@
 from fastapi import APIRouter
 
+from zwiggy.backend.distributed import load_balancer
+from zwiggy.backend.distributed.leader_election import BullyLeaderElection
+from zwiggy.backend.simulation import failure_injector
+
 router = APIRouter(prefix="/distributed", tags=["distributed"])
 
 @router.get("/nodes")

@@ -5,6 +5,8 @@ import threading
 from typing import Dict, List, Callable
 import time
 
+from zwiggy.backend.concurrency import lock_manager
+
 class Transaction:
     """Transaction context"""
     

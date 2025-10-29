@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
 
+from zwiggy.backend.distributed import load_balancer
+from zwiggy.backend.services.order_service import OrderService
+
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 class CreateOrderRequest(BaseModel):

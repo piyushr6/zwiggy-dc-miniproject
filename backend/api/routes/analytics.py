@@ -1,5 +1,8 @@
 from fastapi import APIRouter
 
+from zwiggy.backend.services.analytics_service import AnalyticsService
+from zwiggy.backend.services.order_service import OrderService
+
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 @router.get("/top-items")

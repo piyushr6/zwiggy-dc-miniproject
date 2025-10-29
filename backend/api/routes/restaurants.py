@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
+from zwiggy.backend.services import restaurant_service
+
 router = APIRouter(prefix="/restaurants", tags=["restaurants"])
 
 @router.get("/")

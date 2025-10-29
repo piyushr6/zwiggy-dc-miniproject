@@ -3,6 +3,10 @@ import time
 import uuid
 from datetime import datetime
 
+from zwiggy.backend.concurrency import lock_manager
+from zwiggy.backend.core.node import DistributedNode
+from zwiggy.backend.models.order import Order, OrderItem
+
 class OrderService:
     """Handles order operations"""
     

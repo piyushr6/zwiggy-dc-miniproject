@@ -5,6 +5,9 @@ from typing import Any, Dict, List
 import time
 import copy
 
+from zwiggy.backend.core import message_queue
+from zwiggy.backend.core.node import DistributedNode
+
 class ConsistencyManager:
     """Manages different consistency models"""
     

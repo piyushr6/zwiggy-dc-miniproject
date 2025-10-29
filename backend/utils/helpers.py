@@ -1,5 +1,8 @@
 import json
 from datetime import datetime
+from typing import List
+
+from zwiggy.backend.core.node import DistributedNode
 
 def serialize_datetime(obj):
     """JSON serializer for datetime objects"""

@@ -1,3 +1,7 @@
+from typing import List
+from zwiggy.backend.models.restaurant import MenuItem, Restaurant
+
+
 class RestaurantService:
     """Handles restaurant operations"""
     

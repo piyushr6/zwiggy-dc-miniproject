@@ -1,5 +1,8 @@
 import time
 import random
+from typing import List
+
+from zwiggy.backend.core.node import DistributedNode
 
 class ClockDriftSimulator:
     """Simulates clock drift between nodes"""

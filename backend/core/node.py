@@ -7,6 +7,8 @@ import json
 from typing import Dict, Optional, List
 from datetime import datetime
 
+from zwiggy.backend.core.clock import LamportClock
+
 class DistributedNode:
     """Base class for distributed node instances"""
     

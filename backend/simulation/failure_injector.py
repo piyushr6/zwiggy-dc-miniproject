@@ -1,5 +1,8 @@
 import time
 import random
+from typing import List
+
+from zwiggy.backend.core.node import DistributedNode
 
 class FailureInjector:
     """Simulates node failures for testing"""
