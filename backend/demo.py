@@ -5,19 +5,19 @@ Run this to see the system in action without starting the web server
 
 import time
 import random
-from backend.core.node import DistributedNode
-from backend.core.message_queue import message_queue
-from backend.distributed.leader_election import BullyLeaderElection
-from backend.distributed.consistency import ConsistencyManager
-from backend.distributed.load_balancer import LoadBalancer
-from backend.services.order_service import OrderService
-from backend.services.restaurant_service import RestaurantService
-from backend.services.analytics_service import AnalyticsService
-from backend.simulation.traffic_generator import TrafficGenerator
-from backend.simulation.failure_injector import FailureInjector
-from backend.simulation.clock_drift import ClockDriftSimulator
-from backend.config import Config
-from backend.utils.helpers import print_divider, print_node_status
+from zwiggy.backend.core.node import DistributedNode
+from zwiggy.backend.core.message_queue import message_queue
+from zwiggy.backend.distributed.leader_election import BullyLeaderElection
+from zwiggy.backend.distributed.consistency import ConsistencyManager
+from zwiggy.backend.distributed.load_balancer import LoadBalancer
+from zwiggy.backend.services.order_service import OrderService
+from zwiggy.backend.services.restaurant_service import RestaurantService
+from zwiggy.backend.services.analytics_service import AnalyticsService
+from zwiggy.backend.simulation.traffic_generator import TrafficGenerator
+from zwiggy.backend.simulation.failure_injector import FailureInjector
+from zwiggy.backend.simulation.clock_drift import ClockDriftSimulator
+from zwiggy.backend.config import Config
+from zwiggy.backend.utils.helpers import print_divider, print_node_status
 
 class NodeRegistry:
     """Global registry for node status"""
