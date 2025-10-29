@@ -1,0 +1,69 @@
+# nodes/node1/config.yml
+
+node:
+  id: 1
+  name: "node-1"
+  host: "localhost"
+  port: 8001
+
+distributed:
+  # Leader Election
+  priority: 3
+  election_timeout: 10000 # milliseconds
+  heartbeat_interval: 5000
+
+  # Clock Synchronization
+  lamport_clock_enabled: true
+  vector_clock_enabled: false
+  clock_sync_interval: 1000
+
+  # Replication
+  is_primary: true
+  replication_enabled: true
+  replication_factor: 2
+  sync_interval: 2000
+
+  # Consistency
+  consistency_mode: "strong" # strong | eventual | quorum
+  quorum_size: 2
+
+  # Load Balancing
+  max_concurrent_requests: 100
+  request_timeout: 30000
+
+database:
+  type: "postgresql"
+  host: "localhost"
+  port: 5432
+  database: "fooddelivery_node1"
+  user: "postgres"
+  password: "postgres"
+  connection_pool:
+    min: 2
+    max: 10
+
+redis:
+  host: "localhost"
+  port: 6379
+  db: 1
+  password: ""
+
+logging:
+  level: "INFO" # DEBUG | INFO | WARNING | ERROR
+  file: "logs/node1.log"
+  max_size: 10485760 # 10MB
+  backup_count: 5
+
+monitoring:
+  enabled: true
+  prometheus_port: 9001
+  metrics_interval: 10000
+
+resources:
+  max_memory_mb: 1024
+  max_cpu_percent: 80
+
+health_check:
+  enabled: true
+  interval: 5000
+  endpoint: "/health"

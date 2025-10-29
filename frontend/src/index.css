@@ -1,3 +1,79 @@
+/* frontend/src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+body {
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom animations */
+@keyframes pulse-node {
+
+   0%,
+   100% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0.5;
+   }
+}
+
+@keyframes slide-in {
+   from {
+      transform: translateX(-100%);
+      opacity: 0;
+   }
+
+   to {
+      transform: translateX(0);
+      opacity: 1;
+   }
+}
+
+.node-pulse {
+   animation: pulse-node 2s ease-in-out infinite;
+}
+
+.slide-in {
+   animation: slide-in 0.3s ease-out;
+}
+
+/* Leader badge */
+.leader-badge {
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+}
+
+/* Event log styling */
+.event-log {
+   max-height: 400px;
+   overflow-y: auto;
+}
+
+.event-log::-webkit-scrollbar {
+   width: 8px;
+}
+
+.event-log::-webkit-scrollbar-track {
+   background: #f1f1f1;
+   border-radius: 10px;
+}
+
+.event-log::-webkit-scrollbar-thumb {
+   background: #888;
+   border-radius: 10px;
+}
+
+.event-log::-webkit-scrollbar-thumb:hover {
+   background: #555;
+}

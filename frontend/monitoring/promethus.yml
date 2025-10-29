@@ -1,0 +1,70 @@
+# monitoring/prometheus.yml
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: "food-delivery-distributed"
+    environment: "development"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "alert_rules.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Node 1
+  - job_name: "node-1"
+    static_configs:
+      - targets: ["localhost:9001"]
+        labels:
+          node_id: "1"
+          node_name: "node-1"
+          role: "primary"
+
+  # Node 2
+  - job_name: "node-2"
+    static_configs:
+      - targets: ["localhost:9002"]
+        labels:
+          node_id: "2"
+          node_name: "node-2"
+          role: "replica"
+
+  # Node 3
+  - job_name: "node-3"
+    static_configs:
+      - targets: ["localhost:9003"]
+        labels:
+          node_id: "3"
+          node_name: "node-3"
+          role: "replica"
+
+  # Redis
+  - job_name: "redis"
+    static_configs:
+      - targets: ["localhost:6379"]
+
+  # PostgreSQL
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["localhost:5432"]
+
+  # Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+# Storage configuration
+storage:
+  tsdb:
+    path: /prometheus/data
+    retention:
+      time: 15d
+      size: 10GB
