@@ -1,5 +1,23 @@
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.0
-pytest==8.4.2
-psycopg2==2.9.11
+# --- Core Framework ---
+fastapi==0.110.0
+uvicorn[standard]==0.30.1
+
+# --- WebSocket Support ---
+websockets==12.0
+wsproto==1.2.0
+
+# --- Data & DB ---
+sqlalchemy==2.0.30
+pydantic==2.7.1
+pydantic_settings==2.2.1
+
+# --- Server Dependencies ---
+anyio==4.3.0
+requests==2.31.0
+
+# --- Development / Optional Helpful Packages ---
+python-dotenv==1.0.1
+psutil==5.9.8
+
+# --- If you use async DB drivers (optional) ---
+aiosqlite==0.20.0

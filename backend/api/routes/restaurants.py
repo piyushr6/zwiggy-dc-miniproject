@@ -1,13 +1,12 @@
+# FILE: zwiggy/backend/api/routes/restaurants.py
 from fastapi import APIRouter, HTTPException
-from typing import List
 
-from zwiggy.backend.services import restaurant_service
+from zwiggy.backend.services.restaurant_service import restaurant_service
 
 router = APIRouter(prefix="/restaurants", tags=["restaurants"])
 
 @router.get("/")
 async def get_restaurants():
-    """Get all restaurants"""
     restaurants = restaurant_service.get_restaurants()
     return {
         "success": True,
@@ -33,7 +32,6 @@ async def get_restaurants():
 
 @router.get("/{restaurant_id}")
 async def get_restaurant(restaurant_id: int):
-    """Get specific restaurant"""
     restaurant = restaurant_service.get_restaurant(restaurant_id)
     
     if not restaurant:

@@ -1,3 +1,4 @@
+# FILE: zwiggy/backend/api/routes/orders.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
@@ -13,17 +14,19 @@ class CreateOrderRequest(BaseModel):
     restaurant_id: int
     items: List[dict]
 
+
 @router.post("/")
 async def create_order(request: CreateOrderRequest):
     """Create new order"""
-    # Select node using load balancer
-    node = load_balancer.select_node(Config.ALL_NODES)
-    
+
+    # ✅ Select node using load balancer
+    node = load_balancer.select_node(Config.REGISTERED_NODES)
+
     if not node:
         raise HTTPException(status_code=503, detail="No nodes available")
-    
+
     node.increment_requests()
-    
+
     order_service = OrderService(node)
     order = order_service.create_order(
         user_id=request.user_id,
@@ -31,10 +34,10 @@ async def create_order(request: CreateOrderRequest):
         items=request.items,
         use_lock=True
     )
-    
+
     if not order:
         raise HTTPException(status_code=500, detail="Order creation failed")
-    
+
     return {
         "success": True,
         "data": {
@@ -46,17 +49,19 @@ async def create_order(request: CreateOrderRequest):
         }
     }
 
+
 @router.get("/")
 async def get_orders():
-    """Get all orders from all nodes"""
+    """Get all orders from all active nodes"""
     all_orders = []
-    
-    for node in Config.ALL_NODES:
+
+    # ✅ Loop through registered nodes only
+    for node in Config.REGISTERED_NODES:
         if node.is_active:
             order_service = OrderService(node)
             orders = order_service.get_orders()
             all_orders.extend(orders)
-    
+
     return {
         "success": True,
         "count": len(all_orders),

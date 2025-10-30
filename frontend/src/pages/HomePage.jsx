@@ -19,7 +19,9 @@ const HomePage = () => {
    const fetchRestaurants = async () => {
       try {
          setLoading(true);
-         const data = await restaurantService.getRestaurants();
+         const result = await restaurantService.getRestaurants();
+
+         const data = result?.data || [];   // ✅ Prevent undefined
          setRestaurants(data);
          setFilteredRestaurants(data);
       } catch (err) {
@@ -33,23 +35,22 @@ const HomePage = () => {
    const handleFilterChange = (filters) => {
       let filtered = [...restaurants];
 
-      // Filter by cuisine
       if (filters.cuisine) {
-         filtered = filtered.filter(r => r.cuisine === filters.cuisine);
+         filtered = filtered.filter(
+            r => r?.cuisine?.toLowerCase() === filters.cuisine.toLowerCase()
+         );
       }
 
-      // Filter by rating
       if (filters.rating) {
          const minRating = parseFloat(filters.rating);
-         filtered = filtered.filter(r => r.rating >= minRating);
+         filtered = filtered.filter(r => (r?.rating || 0) >= minRating);
       }
 
-      // Sort
       if (filters.sortBy) {
          filtered.sort((a, b) => {
-            if (filters.sortBy === 'rating') return b.rating - a.rating;
-            if (filters.sortBy === 'deliveryTime') return a.deliveryTime - b.deliveryTime;
-            if (filters.sortBy === 'minOrder') return a.minOrder - b.minOrder;
+            if (filters.sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
+            if (filters.sortBy === 'deliveryTime') return (a.deliveryTime || 0) - (b.deliveryTime || 0);
+            if (filters.sortBy === 'minOrder') return (a.minOrder || 0) - (b.minOrder || 0);
             return 0;
          });
       }
@@ -59,15 +60,17 @@ const HomePage = () => {
 
    const handleSearch = (query) => {
       setSearchQuery(query);
+
       if (!query.trim()) {
          setFilteredRestaurants(restaurants);
          return;
       }
 
       const searched = restaurants.filter(r =>
-         r.name.toLowerCase().includes(query.toLowerCase()) ||
-         r.cuisine.toLowerCase().includes(query.toLowerCase())
+         r?.name?.toLowerCase().includes(query.toLowerCase()) ||
+         r?.cuisine?.toLowerCase().includes(query.toLowerCase())
       );
+
       setFilteredRestaurants(searched);
    };
 
@@ -89,15 +92,12 @@ const HomePage = () => {
 
    return (
       <div>
-         {/* Hero Section */}
          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12 mb-8 rounded-lg">
             <div className="text-center">
                <h1 className="text-4xl font-bold mb-4">Distributed Food Delivery</h1>
                <p className="text-lg mb-6">
                   Experience distributed systems concepts through food delivery
                </p>
-
-               {/* Search Bar */}
                <div className="max-w-2xl mx-auto">
                   <input
                      type="text"
@@ -110,18 +110,18 @@ const HomePage = () => {
             </div>
          </div>
 
-         {/* Filters */}
          <RestaurantFilters onFilterChange={handleFilterChange} />
 
-         {/* Statistics */}
          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white p-4 rounded-lg shadow-md text-center">
-               <p className="text-3xl font-bold text-blue-600">{restaurants.length}</p>
+               <p className="text-3xl font-bold text-blue-600">
+                  {restaurants?.length || 0}
+               </p>
                <p className="text-gray-600">Restaurants</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-md text-center">
                <p className="text-3xl font-bold text-green-600">
-                  {restaurants.filter(r => r.isOpen).length}
+                  {restaurants?.filter(r => r?.isOpen)?.length || 0}
                </p>
                <p className="text-gray-600">Open Now</p>
             </div>
@@ -131,14 +131,16 @@ const HomePage = () => {
             </div>
          </div>
 
-         {/* Restaurants Grid */}
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRestaurants.map(restaurant => (
-               <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            {filteredRestaurants?.map(restaurant => (
+               <RestaurantCard
+                  key={restaurant?.restaurant_id}
+                  restaurant={restaurant}
+               />
             ))}
          </div>
 
-         {filteredRestaurants.length === 0 && (
+         {filteredRestaurants?.length === 0 && (
             <div className="text-center py-12">
                <p className="text-gray-500 text-lg">No restaurants found</p>
             </div>

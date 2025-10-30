@@ -3,7 +3,7 @@
 
 import threading
 import time
-from typing import Dict, List
+from typing import List
 from zwiggy.backend.core import message_queue
 from zwiggy.backend.core.node import DistributedNode
 
@@ -11,7 +11,7 @@ from zwiggy.backend.core.node import DistributedNode
 class BullyLeaderElection:
     """Bully Algorithm for Leader Election"""
 
-    def __init__(self, node: DistributedNode, all_nodes: List[Dict]):
+    def __init__(self, node: DistributedNode, all_nodes: List[DistributedNode]):
         self.node = node
         self.all_nodes = all_nodes
         self.election_in_progress = False
@@ -29,11 +29,10 @@ class BullyLeaderElection:
             self.node.log_event("ELECTION_START",
                 f"Node {self.node.node_id} starting election")
 
-        # Higher priority nodes
-        higher_nodes = [n for n in self.all_nodes if n["id"] > self.node.node_id]
+        # ✅ Higher priority nodes (by node_id)
+        higher_nodes = [n for n in self.all_nodes if n.node_id > self.node.node_id]
 
         if not higher_nodes:
-            # No one above me, I become leader
             self._become_leader()
             self._finish()
             return True
@@ -43,17 +42,17 @@ class BullyLeaderElection:
             msg = {
                 "type": "ELECTION",
                 "from_node": self.node.node_id,
-                "to_node": n["id"],
+                "to_node": n.node_id,
                 "timestamp": time.time()
             }
 
             self.node.log_event("ELECTION_MESSAGE",
-                f"Sending ELECTION to Node {n['id']}")
+                f"Sending ELECTION to Node {n.node_id}")
 
-            message_queue.send_message(n["id"], msg)
-            responses.append(self._check_node_response(n["id"]))
+            message_queue.send_message(n.node_id, msg)
+            responses.append(self._check_node_response(n.node_id))
 
-        # If nobody responds → I am leader
+        # ✅ If nobody responds → I am leader
         if not any(responses):
             self._become_leader()
         else:
@@ -65,15 +64,13 @@ class BullyLeaderElection:
 
     # -----------------------------------------------------------
     def _check_node_response(self, node_id: int) -> bool:
-        """Simulated OK response check (in real system we wait for message)."""
-        # ✅ Lazy import to avoid circular dependency
+        """Check if node is alive"""
         from zwiggy.backend.demo import NodeRegistry
         return NodeRegistry.is_node_active(node_id)
 
     # -----------------------------------------------------------
     def _become_leader(self):
-        """Declare this node as the new leader"""
-        # ✅ Lazy import here too
+        """Declare this node as leader"""
         from zwiggy.backend.demo import NodeRegistry
 
         self.node.is_leader = True
@@ -82,28 +79,26 @@ class BullyLeaderElection:
         self.node.log_event("LEADER_ELECTED",
             f"Node {self.node.node_id} became leader")
 
-        # Broadcast COORDINATOR message
+        # ✅ Notify everybody else
         for n in self.all_nodes:
-            if n["id"] == self.node.node_id:
+            if n.node_id == self.node.node_id:
                 continue
 
             msg = {
                 "type": "COORDINATOR",
                 "leader_id": self.node.node_id,
-                "to_node": n["id"],
+                "to_node": n.node_id,
                 "timestamp": time.time()
             }
 
             self.node.log_event("COORDINATOR_BROADCAST",
-                f"Broadcasting COORDINATOR to Node {n['id']}")
+                f"Broadcasting COORDINATOR to Node {n.node_id}")
 
-            message_queue.send_message(n["id"], msg)
+            message_queue.send_message(n.node_id, msg)
 
-        # Update globally
         NodeRegistry.set_leader(self.node.node_id)
 
     # -----------------------------------------------------------
     def _finish(self):
-        """Mark election finished safely"""
         with self.election_lock:
             self.election_in_progress = False

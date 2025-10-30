@@ -1,5 +1,5 @@
 // frontend/src/pages/DistributedDashboard.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useDistributedState from '../hooks/useDistributedState';
 import NodeVisualization from '../components/distributed/NodeVisualization';
 import ClockSyncTimeline from '../components/distributed/ClockSyncTimeline';
@@ -24,13 +24,17 @@ const DistributedDashboard = () => {
       { id: 'events', label: 'Event Logs', icon: '📋' }
    ];
 
+   // Safe access to nodes array
+   const safeNodes = Array.isArray(nodes) ? nodes : [];
+   const safeEventLogs = Array.isArray(eventLogs) ? eventLogs : [];
+
    return (
-      <div>
+      <div className="p-6">
          {/* Header */}
          <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
                <div>
-                  <h1 className="text-3xl font-bold">Distributed System Dashboard</h1>
+                  <h1 className="text-3xl font-bold text-gray-800">Distributed System Dashboard</h1>
                   <p className="text-gray-600 mt-2">
                      Monitor and interact with distributed system components
                   </p>
@@ -47,17 +51,17 @@ const DistributedDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                <div className="bg-white p-4 rounded-lg shadow-md">
                   <p className="text-sm text-gray-600 mb-1">Active Nodes</p>
-                  <p className="text-3xl font-bold text-blue-600">{nodes.length}</p>
+                  <p className="text-3xl font-bold text-blue-600">{safeNodes.length}</p>
                </div>
                <div className="bg-white p-4 rounded-lg shadow-md">
                   <p className="text-sm text-gray-600 mb-1">Current Leader</p>
                   <p className="text-3xl font-bold text-purple-600">
-                     {leader ? `Node ${leader.id}` : 'None'}
+                     {leader ? `Node ${leader.node_id || leader.id}` : 'None'}
                   </p>
                </div>
                <div className="bg-white p-4 rounded-lg shadow-md">
                   <p className="text-sm text-gray-600 mb-1">Event Logs</p>
-                  <p className="text-3xl font-bold text-green-600">{eventLogs.length}</p>
+                  <p className="text-3xl font-bold text-green-600">{safeEventLogs.length}</p>
                </div>
                <div className="bg-white p-4 rounded-lg shadow-md">
                   <p className="text-sm text-gray-600 mb-1">System Status</p>
@@ -89,13 +93,13 @@ const DistributedDashboard = () => {
          <div className="space-y-6">
             {activeTab === 'nodes' && (
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <NodeVisualization nodes={nodes} leader={leader} />
-                  <LeaderElectionPanel leader={leader} nodes={nodes} />
+                  <NodeVisualization nodes={safeNodes} leader={leader} />
+                  <LeaderElectionPanel leader={leader} nodes={safeNodes} />
                </div>
             )}
 
             {activeTab === 'clock' && (
-               <ClockSyncTimeline events={eventLogs} />
+               <ClockSyncTimeline events={safeEventLogs} />
             )}
 
             {activeTab === 'consistency' && (
@@ -103,11 +107,11 @@ const DistributedDashboard = () => {
             )}
 
             {activeTab === 'loadbalancer' && (
-               <LoadBalancerView nodes={nodes} />
+               <LoadBalancerView nodes={safeNodes} />
             )}
 
             {activeTab === 'replication' && (
-               <ReplicationStatus nodes={nodes} />
+               <ReplicationStatus nodes={safeNodes} />
             )}
 
             {activeTab === 'concurrency' && (
@@ -115,46 +119,46 @@ const DistributedDashboard = () => {
             )}
 
             {activeTab === 'events' && (
-               <EventLogViewer events={eventLogs} />
+               <EventLogViewer events={safeEventLogs} />
             )}
          </div>
 
          {/* Information Panel */}
          <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
-            <h3 className="font-bold mb-4">🎓 Distributed Systems Concepts</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-800">🎓 Distributed Systems Concepts</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Leader Election</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Leader Election</p>
                   <p className="text-gray-600">
                      Bully algorithm ensures a leader is always elected to coordinate operations.
                   </p>
                </div>
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Lamport Clocks</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Lamport Clocks</p>
                   <p className="text-gray-600">
                      Logical timestamps maintain causal ordering of events across nodes.
                   </p>
                </div>
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Consistency Models</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Consistency Models</p>
                   <p className="text-gray-600">
                      Choose between strong, eventual, or quorum-based consistency.
                   </p>
                </div>
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Load Balancing</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Load Balancing</p>
                   <p className="text-gray-600">
                      Distribute requests across nodes using various algorithms.
                   </p>
                </div>
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Data Replication</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Data Replication</p>
                   <p className="text-gray-600">
                      Maintain multiple copies of data for fault tolerance.
                   </p>
                </div>
-               <div className="bg-white p-4 rounded-lg">
-                  <p className="font-semibold mb-2">Concurrency Control</p>
+               <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <p className="font-semibold mb-2 text-gray-800">Concurrency Control</p>
                   <p className="text-gray-600">
                      Use distributed locks to prevent race conditions.
                   </p>

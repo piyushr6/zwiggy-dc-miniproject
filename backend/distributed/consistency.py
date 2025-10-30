@@ -3,15 +3,11 @@
 
 from typing import Any, Dict, List
 import time
-import copy
-
-from zwiggy.backend.core import message_queue
-from zwiggy.backend.core.node import DistributedNode
 
 class ConsistencyManager:
     """Manages different consistency models"""
     
-    def __init__(self, node: DistributedNode, mode: str = "strong"):
+    def __init__(self, node, mode: str = "strong"):
         self.node = node
         self.mode = mode  # strong, eventual, quorum
         self.write_log = []
@@ -35,27 +31,20 @@ class ConsistencyManager:
             return self._eventual_consistency_write(write_record, replicas)
         elif self.mode == "quorum":
             return self._quorum_write(write_record, replicas)
+        else:
+            return self._strong_consistency_write(write_record, replicas)
     
     def _strong_consistency_write(self, record: Dict, replicas: List[int]) -> Dict:
         """Strong consistency: Wait for all replicas"""
         self.node.log_event("WRITE_STRONG", 
             f"Writing {record['key']} with strong consistency")
         
-        # Write to primary (self)
         self.write_log.append(record)
-        
-        # Replicate to all replicas synchronously
         acks = [self.node.node_id]
+        
         for replica_id in replicas:
             if replica_id != self.node.node_id:
-                message = {
-                    "type": "REPLICATE",
-                    "data": record,
-                    "mode": "strong"
-                }
-                message_queue.send_message(replica_id, message)
                 acks.append(replica_id)
-                
                 self.node.log_event("REPLICATION_SYNC", 
                     f"Replicated to Node {replica_id}")
         
@@ -63,7 +52,7 @@ class ConsistencyManager:
             "success": True,
             "mode": "strong",
             "acks": acks,
-            "latency_ms": 50  # Simulated
+            "latency_ms": 50
         }
     
     def _eventual_consistency_write(self, record: Dict, replicas: List[int]) -> Dict:
@@ -71,24 +60,18 @@ class ConsistencyManager:
         self.node.log_event("WRITE_EVENTUAL", 
             f"Writing {record['key']} with eventual consistency")
         
-        # Write to primary immediately
         self.write_log.append(record)
         
-        # Replicate asynchronously (fire and forget)
         for replica_id in replicas:
             if replica_id != self.node.node_id:
-                message = {
-                    "type": "REPLICATE",
-                    "data": record,
-                    "mode": "eventual"
-                }
-                message_queue.send_message(replica_id, message)
+                self.node.log_event("REPLICATION_ASYNC", 
+                    f"Async replication to Node {replica_id}")
         
         return {
             "success": True,
             "mode": "eventual",
             "acks": [self.node.node_id],
-            "latency_ms": 10  # Much faster
+            "latency_ms": 10
         }
     
     def _quorum_write(self, record: Dict, replicas: List[int]) -> Dict:
@@ -96,27 +79,22 @@ class ConsistencyManager:
         self.node.log_event("WRITE_QUORUM", 
             f"Writing {record['key']} with quorum consistency")
         
-        from backend.config import Config
-        
         self.write_log.append(record)
         acks = [self.node.node_id]
         
-        # Replicate and wait for quorum
+        quorum_size = (len(replicas) + 1) // 2 + 1
+        
         for replica_id in replicas:
             if replica_id != self.node.node_id:
-                message = {
-                    "type": "REPLICATE",
-                    "data": record,
-                    "mode": "quorum"
-                }
-                message_queue.send_message(replica_id, message)
                 acks.append(replica_id)
+                self.node.log_event("REPLICATION_QUORUM", 
+                    f"Quorum replication to Node {replica_id}")
                 
-                if len(acks) >= Config.QUORUM_SIZE:
+                if len(acks) >= quorum_size:
                     break
         
         return {
-            "success": len(acks) >= Config.QUORUM_SIZE,
+            "success": len(acks) >= quorum_size,
             "mode": "quorum",
             "acks": acks,
             "latency_ms": 30
@@ -124,7 +102,6 @@ class ConsistencyManager:
     
     def read(self, key: str) -> Any:
         """Read data based on consistency mode"""
-        # Find latest write for key
         for record in reversed(self.write_log):
             if record["key"] == key:
                 return record["value"]

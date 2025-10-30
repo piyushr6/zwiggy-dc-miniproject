@@ -1,3 +1,4 @@
+# FILE: zwiggy/backend/services/restaurant_service.py
 from typing import List
 from zwiggy.backend.models.restaurant import MenuItem, Restaurant
 
@@ -8,7 +9,6 @@ class RestaurantService:
         self.restaurants = self._initialize_restaurants()
     
     def _initialize_restaurants(self) -> List[Restaurant]:
-        """Initialize sample restaurants"""
         return [
             Restaurant(
                 restaurant_id=1,
@@ -46,21 +46,18 @@ class RestaurantService:
         ]
     
     def get_restaurants(self) -> List[Restaurant]:
-        """Get all restaurants"""
         return self.restaurants
     
     def get_restaurant(self, restaurant_id: int) -> Restaurant:
-        """Get specific restaurant"""
-        for restaurant in self.restaurants:
-            if restaurant.restaurant_id == restaurant_id:
-                return restaurant
-        return None
+        return next((r for r in self.restaurants if r.restaurant_id == restaurant_id), None)
     
     def update_inventory(self, restaurant_id: int, item_id: int, quantity_change: int):
-        """Update menu item inventory"""
         restaurant = self.get_restaurant(restaurant_id)
         if restaurant:
             for item in restaurant.menu:
                 if item.item_id == item_id:
                     item.quantity_available += quantity_change
                     break
+
+# ✅ Shared instance
+restaurant_service = RestaurantService()
